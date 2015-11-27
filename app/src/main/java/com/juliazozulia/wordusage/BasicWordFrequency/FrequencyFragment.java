@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Process;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +18,12 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.juliazozulia.wordusage.Database;
+import com.juliazozulia.wordusage.LMorphology;
 import com.juliazozulia.wordusage.R;
 
 import org.apache.commons.math3.stat.Frequency;
+
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -58,8 +62,7 @@ public class FrequencyFragment extends Fragment {
         mProgressBar = (ProgressBar) result.findViewById(R.id.progressBar1);
         if (f.getUniqueCount() == 0) {
             mProgressBar.setVisibility(View.VISIBLE);
-        }
-        else  mProgressBar.setVisibility(View.GONE);
+        } else mProgressBar.setVisibility(View.GONE);
         return result;
     }
 
@@ -116,7 +119,9 @@ public class FrequencyFragment extends Fragment {
         mAdapter.setNotifyOnChange(true);
         mListView.setAdapter(mAdapter);
         mProgressBar.setVisibility(View.GONE);
-        Toast.makeText(getActivity(),String.format(getActivity().getResources().getString(R.string.size_template), event.getWords().getUniqueCount(), event.getWords().getTotalCount()),Toast.LENGTH_LONG).show();
+        Snackbar.make(mListView, String.format(getActivity().getResources().getString(R.string.size_template), event.getWords().getUniqueCount(), event.getWords().getTotalCount()), Snackbar.LENGTH_INDEFINITE)
+                .setAction("Action", null).show();
+      //  Toast.makeText(getActivity(), String.format(getActivity().getResources().getString(R.string.size_template), event.getWords().getUniqueCount(), event.getWords().getTotalCount()), Toast.LENGTH_LONG).show();
     }
 
     private class FrequencyThread extends Thread {
@@ -130,6 +135,7 @@ public class FrequencyFragment extends Fragment {
             Log.v(this.toString(), "run");
             android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             String divider = "[^[a-zA-Zа-яА-ЯёЁіІЇї]]";
+            String replace = "(<.+>)|&quot;";
             // f = new Frequency(String.CASE_INSENSITIVE_ORDER);
             Cursor c;
             int limit = 10000;
@@ -141,7 +147,6 @@ public class FrequencyFragment extends Fragment {
                 args[2] = Integer.toString(offset);
                 Log.v("FrequencyThread", "in while, offset = " + args[2]);
 
-               // c = DatabaseHelper.getInstance(getActivity()).getReadableDatabase().rawQuery("SELECT body_xml FROM Messages WHERE author = ? LIMIT ? OFFSET ?", args);
                 c = Database.getDatabase().rawQuery("SELECT body_xml FROM Messages WHERE author = ? LIMIT ? OFFSET ?", args);
                 while (c.moveToNext()) {
 
@@ -149,12 +154,10 @@ public class FrequencyFragment extends Fragment {
                         return;
                     }
                     try {
-                        String[] items = c.getString(0).split(divider);
+                        String[] items = c.getString(0).replaceAll(replace, "").split(divider);
                         for (String item : items) {
                             if (!TextUtils.isEmpty(item)) {
-                                f.addValue(item.toLowerCase());
-                                //EventBus.getDefault().post(new FrequencyLoadedEvent(f));
-                                //  Log.v("FrequencyThread", "Added value " + item);
+                                f.addValue(getProperString(item));
                             }
                         }
                     } catch (Exception e) {
@@ -173,6 +176,23 @@ public class FrequencyFragment extends Fragment {
 
             EventBus.getDefault().post(new FrequencyLoadedEvent(f));
             Log.v("FrequencyThread", "after EventBus.getDefault().post");
+        }
+
+        private String getProperString(String str) {
+            str = str.toLowerCase();
+            List<String> wordBaseForms;
+            try {
+                wordBaseForms = LMorphology.getRussianInstance().getNormalForms(str);
+                return wordBaseForms.get(0);
+            } catch (Exception e) {
+                try {
+                    wordBaseForms = LMorphology.getEnglishInstance().getNormalForms(str);
+                    return wordBaseForms.get(0);
+                } catch (Exception e1) {
+                    return str;
+                }
+            }
+
         }
     }
 

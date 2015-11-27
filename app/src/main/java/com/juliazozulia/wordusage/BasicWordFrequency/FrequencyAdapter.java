@@ -26,7 +26,7 @@ public class FrequencyAdapter extends ArrayAdapter<String> {
 
     @Override
     public int getCount() {
-        return f.getUniqueCount() ;
+        return f.getUniqueCount();
     }
 
 
@@ -46,7 +46,7 @@ public class FrequencyAdapter extends ArrayAdapter<String> {
 
         mViewHolder.title.setText(item);
         mViewHolder.absolute.setText(Long.toString(f.getCount(item)));
-        mViewHolder.relative.setText(Double.toString(f.getPct(item)));
+        mViewHolder.relative.setText(String.format("%.2f", f.getPct(item) * 100) + "%");
 
 
         return (row);

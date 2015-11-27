@@ -6,5 +6,6 @@
     <string name="word_title">Слово</string>
     <string name="absolute">Абсолютное значение</string>
     <string name="relative">Процент</string>
-    <string name="size_template" formatted="false">Словарный запас: %s, проанализировано слов: %s</string>
+    <string name="size_template" formatted="false">Словарный запас: %s; \nпроанализировано слов: %s</string>
+    <string name="title_activity_main_attempt">MainAttemptActivity</string>
 </resources>
