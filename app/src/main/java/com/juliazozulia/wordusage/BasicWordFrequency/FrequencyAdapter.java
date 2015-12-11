@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.juliazozulia.wordusage.R;
 
-import org.apache.commons.math3.stat.Frequency;
+import com.juliazozulia.wordusage.Utils.Frequency;
 
 /**
  * Created by Julia on 23.11.2015.
@@ -24,10 +24,10 @@ public class FrequencyAdapter extends ArrayAdapter<String> {
     }
 
 
-    @Override
+   /* @Override
     public int getCount() {
         return f.getUniqueCount();
-    }
+    }*/
 
 
     @Override

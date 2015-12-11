@@ -4,41 +4,52 @@ package com.juliazozulia.wordusage.BasicWordFrequency;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.database.Cursor;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Process;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import com.juliazozulia.wordusage.Database;
-import com.juliazozulia.wordusage.LMorphology;
+import com.github.fabtransitionactivity.SheetLayout;
+import com.juliazozulia.wordusage.Utils.FrequencyHolder;
+import com.juliazozulia.wordusage.PersonalChart.PersonalChartActivity;
 import com.juliazozulia.wordusage.R;
 
-import org.apache.commons.math3.stat.Frequency;
-
-import java.util.List;
+import com.juliazozulia.wordusage.Utils.Frequency;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FrequencyFragment extends Fragment {
+public class FrequencyFragment extends Fragment implements
+        SearchView.OnQueryTextListener,
+        SearchView.OnCloseListener {
 
+    String TAG = getClass().getSimpleName();
     private static final String KEY_USER = "user";
-    private Frequency f = new Frequency();
-    private String key_user;
+    private Frequency f = null;
+    private String keyUser;
+
     ListView mListView;
-    FrequencyThread frequencyThread;
     ProgressBar mProgressBar;
-    private boolean isStarted = false;
+    SheetLayout mSheetLayout;
+    FloatingActionButton fab;
+    Snackbar mSnackbar;
+    SearchView mSearchView;
+    //boolean isStarted = false;
 
     public FrequencyFragment() {
     }
@@ -55,39 +66,51 @@ public class FrequencyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View result = inflater.inflate(R.layout.fragment_word_frequency, container, false);
-        mListView = (ListView) result.findViewById(R.id.word_list);
+
+        bindViews(result);
+        setupViews();
+        bindListeners();
+
         View header = inflater.inflate(R.layout.list_header, null);
         mListView.addHeaderView(header);
-        mProgressBar = (ProgressBar) result.findViewById(R.id.progressBar1);
-        if (f.getUniqueCount() == 0) {
+
+
+        if (f == null) {
             mProgressBar.setVisibility(View.VISIBLE);
-        } else mProgressBar.setVisibility(View.GONE);
+        } else {
+            mProgressBar.setVisibility(View.GONE);
+            actionDataExist();
+        }
+
+        setHasOptionsMenu(true);
+
         return result;
     }
 
-    @Override
-    public void onViewCreated(View v, Bundle savedInstanceState) {
-
-        Log.v(this.toString(), "onViewCreated");
-        super.onViewCreated(v, savedInstanceState);
-        mListView.setScrollbarFadingEnabled(false);
-        mListView.setAdapter(new FrequencyAdapter(getActivity(), f));
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
         setRetainInstance(true);
         if (getArguments() != null) {
-            key_user = getArguments().getString(KEY_USER);
-        }
-        if (!isStarted) {
-            isStarted = true;
-            frequencyThread = new FrequencyThread();
-            frequencyThread.start();
+            keyUser = getArguments().getString(KEY_USER);
+            f = FrequencyHolder.getFrequencyForce(getActivity(), keyUser);
         }
     }
+
+   /* @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mSnackbar != null) {
+            mSnackbar.dismiss();
+            mSheetLayout.contractFab();
+            mSnackbar.show();
+        }
+    }*/
 
     @Override
     public void onAttach(Activity host) {
@@ -101,12 +124,10 @@ public class FrequencyFragment extends Fragment {
         EventBus.getDefault().register(this);
     }
 
-
     @Override
     public void onDetach() {
-        Log.v(this.toString(), "onDetach");
+        Log.v(TAG, "onDetach");
         EventBus.getDefault().unregister(this);
-        //frequencyThread.interrupt();
         super.onDetach();
     }
 
@@ -114,87 +135,128 @@ public class FrequencyFragment extends Fragment {
     @SuppressWarnings("unused")
     public void onEventMainThread(FrequencyLoadedEvent event) {
 
-        Log.v(this.toString(), "onEventMainThread");
-        FrequencyAdapter mAdapter = new FrequencyAdapter(getActivity(), event.getWords());
-        mAdapter.setNotifyOnChange(true);
-        mListView.setAdapter(mAdapter);
+        /**
+         * TODO maybe remove FrequencyLoadedEvent event, switch to keyUser
+         */
+        Log.v(TAG, "onEventMainThread");
+        f = event.getFrequency();
+        actionDataExist();
+    }
+
+    private void bindViews(View result) {
+        mListView = (ListView) result.findViewById(R.id.word_list);
+        mSheetLayout = (SheetLayout) result.findViewById(R.id.frequency_bottom_sheet);
+        mProgressBar = (ProgressBar) result.findViewById(R.id.progressBar1);
+        fab = (FloatingActionButton) result.findViewById(R.id.frequency_fab);
+    }
+
+    private void setupViews() {
+        mSheetLayout.setFab(fab);
+        mListView.setFastScrollEnabled(true);
+        mListView.setScrollbarFadingEnabled(false);
+    }
+
+    private void bindListeners() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), PersonalChartActivity.class);
+                intent.putExtra(PersonalChartActivity.EXTRA_USER, keyUser);
+                startActivity(intent);
+                //mSheetLayout.expandFab();
+            }
+        });
+
+        mSheetLayout.setFabAnimationEndListener(new SheetLayout.OnFabAnimationEndListener() {
+            @Override
+            public void onFabAnimationEnd() {
+                Intent intent = new Intent(getActivity(), PersonalChartActivity.class);
+                intent.putExtra(PersonalChartActivity.EXTRA_USER, keyUser);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void actionDataExist() {
+
+        fab.setVisibility(View.VISIBLE);
+       // mSearchView.setVisibility(View.VISIBLE);
+        mListView.setAdapter(new FrequencyAdapter(getActivity(), f));
         mProgressBar.setVisibility(View.GONE);
-        Snackbar.make(mListView, String.format(getActivity().getResources().getString(R.string.size_template), event.getWords().getUniqueCount(), event.getWords().getTotalCount()), Snackbar.LENGTH_INDEFINITE)
-                .setAction("Action", null).show();
-      //  Toast.makeText(getActivity(), String.format(getActivity().getResources().getString(R.string.size_template), event.getWords().getUniqueCount(), event.getWords().getTotalCount()), Toast.LENGTH_LONG).show();
+        Frequency f = FrequencyHolder.getInstance().get(keyUser);
+        mSnackbar = Snackbar.make(fab,
+                String.format(
+                        getActivity().getResources().getString(R.string.size_template),
+                        f.getUniqueCount(), f.getTotalCount()),
+                Snackbar.LENGTH_INDEFINITE
+        );
+        mSnackbar.setAction(R.string.close, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.v(TAG, "fab action");
+            }
+        });
+        mSnackbar.show();
+
     }
 
-    private class FrequencyThread extends Thread {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
 
-        FrequencyThread() {
-            super();
-        }
+        configureSearchView(menu);
 
-        @Override
-        public void run() {
-            Log.v(this.toString(), "run");
-            android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            String divider = "[^[a-zA-Zа-яА-ЯёЁіІЇї]]";
-            String replace = "(<.+>)|&quot;";
-            // f = new Frequency(String.CASE_INSENSITIVE_ORDER);
-            Cursor c;
-            int limit = 10000;
-            int offset = 0;
-            String[] args = {key_user, Integer.toString(limit), Integer.toString(offset)};
-
-            while (true) {
-
-                args[2] = Integer.toString(offset);
-                Log.v("FrequencyThread", "in while, offset = " + args[2]);
-
-                c = Database.getDatabase().rawQuery("SELECT body_xml FROM Messages WHERE author = ? LIMIT ? OFFSET ?", args);
-                while (c.moveToNext()) {
-
-                    if (isInterrupted()) {
-                        return;
-                    }
-                    try {
-                        String[] items = c.getString(0).replaceAll(replace, "").split(divider);
-                        for (String item : items) {
-                            if (!TextUtils.isEmpty(item)) {
-                                f.addValue(getProperString(item));
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.v("FrequencyThread", e.getMessage() + "Some Exception");
-                    }
-
-                }
-                if (c.getCount() < limit) {
-                    break;
-                }
-                offset += limit;
-                //
-
-            }
-            c.close();
-
-            EventBus.getDefault().post(new FrequencyLoadedEvent(f));
-            Log.v("FrequencyThread", "after EventBus.getDefault().post");
-        }
-
-        private String getProperString(String str) {
-            str = str.toLowerCase();
-            List<String> wordBaseForms;
-            try {
-                wordBaseForms = LMorphology.getRussianInstance().getNormalForms(str);
-                return wordBaseForms.get(0);
-            } catch (Exception e) {
-                try {
-                    wordBaseForms = LMorphology.getEnglishInstance().getNormalForms(str);
-                    return wordBaseForms.get(0);
-                } catch (Exception e1) {
-                    return str;
-                }
-            }
-
-        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
+    private void configureSearchView(Menu menu) {
+        /**
+         * TODO make invisible or non clickable while there is no data
+         */
+
+        MenuItem search = menu.findItem(R.id.search);
+
+        mSearchView = (SearchView) search.getActionView();
+       // mSearchView.setVisibility(View.INVISIBLE);
+        mSearchView.setOnQueryTextListener(this);
+        mSearchView.setOnCloseListener(this);
+        mSearchView.setSubmitButtonEnabled(false);
+        mSearchView.setIconifiedByDefault(true);
+
+        /**
+         * TODO save initial query on configuration change (search)
+         */
+
+       /* if (initialQuery != null) {
+            sv.setIconified(false);
+            search.expandActionView();
+            sv.setQuery(initialQuery, true);
+        }*/
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        ArrayAdapter<String> adapter = ((FrequencyAdapter) ((HeaderViewListAdapter) mListView.getAdapter()).getWrappedAdapter());
+        if (TextUtils.isEmpty(newText)) {
+            adapter.getFilter().filter("");
+        } else {
+            adapter.getFilter().filter(newText.toString());
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onClose() {
+        ArrayAdapter<String> adapter = (ArrayAdapter) mListView.getAdapter();
+        adapter.getFilter().filter("");
+        return true;
+    }
 
 }

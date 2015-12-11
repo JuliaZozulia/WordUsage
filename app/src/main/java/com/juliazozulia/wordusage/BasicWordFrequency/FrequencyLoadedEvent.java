@@ -1,20 +1,20 @@
 package com.juliazozulia.wordusage.BasicWordFrequency;
 
-import org.apache.commons.math3.stat.Frequency;
+import com.juliazozulia.wordusage.Utils.Frequency;
 
 /**
  * Created by Julia on 24.11.2015.
  */
 public class FrequencyLoadedEvent {
 
-    final Frequency words;
+    final Frequency frequency;
 
-    public FrequencyLoadedEvent(Frequency w) {
-        words = w;
+    public FrequencyLoadedEvent(Frequency f) {
+        frequency = f;
     }
 
-    public Frequency getWords() {
-        return words;
+    public Frequency getFrequency() {
+        return frequency;
     }
 }
 

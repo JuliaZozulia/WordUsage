@@ -8,4 +8,9 @@
     <string name="relative">Процент</string>
     <string name="size_template" formatted="false">Словарный запас: %s; \nпроанализировано слов: %s</string>
     <string name="title_activity_main_attempt">MainAttemptActivity</string>
+    <string name="filter">Поиск</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="chart_switch_text">Абсолютные значения/проценты</string>
+    <string name="title_activity_personal_chart">PersonalChartActivity</string>
+    <string name="close">Закрыть</string>
 </resources>
