@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.BasicWordFrequency;
+package com.juliazozulia.wordusage.UI.BasicWordFrequency;
 
 
 import android.app.Activity;
@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SearchView;
@@ -17,14 +18,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import com.github.fabtransitionactivity.SheetLayout;
+import com.juliazozulia.wordusage.UI.Messages.MessageActivity;
+import com.juliazozulia.wordusage.UI.Messages.MessageAdapter;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
-import com.juliazozulia.wordusage.PersonalChart.PersonalChartActivity;
+import com.juliazozulia.wordusage.UI.PersonalChart.PersonalChartActivity;
 import com.juliazozulia.wordusage.R;
 
 import com.juliazozulia.wordusage.Utils.Frequency;
@@ -38,7 +42,7 @@ public class FrequencyFragment extends Fragment implements
         SearchView.OnQueryTextListener,
         SearchView.OnCloseListener {
 
-    String TAG = getClass().getSimpleName();
+    private static final String TAG = FrequencyFragment.class.getSimpleName();
     private static final String KEY_USER = "user";
     private Frequency f = null;
     private String keyUser;
@@ -49,7 +53,8 @@ public class FrequencyFragment extends Fragment implements
     FloatingActionButton fab;
     Snackbar mSnackbar;
     SearchView mSearchView;
-    //boolean isStarted = false;
+    CharSequence initialQuery;
+
 
     public FrequencyFragment() {
     }
@@ -84,8 +89,7 @@ public class FrequencyFragment extends Fragment implements
             actionDataExist();
         }
 
-        setHasOptionsMenu(true);
-
+        //setHasOptionsMenu(true);
         return result;
     }
 
@@ -95,6 +99,7 @@ public class FrequencyFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
         setRetainInstance(true);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             keyUser = getArguments().getString(KEY_USER);
             f = FrequencyHolder.getFrequencyForce(getActivity(), keyUser);
@@ -111,6 +116,28 @@ public class FrequencyFragment extends Fragment implements
             mSnackbar.show();
         }
     }*/
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+        if (mSearchView != null) {
+            if (!mSearchView.isIconified()) {
+                initialQuery = mSearchView.getQuery();
+            }
+        }
+    }
+
+
+  /*  @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState == null) {
+        } else {
+            initialQuery = savedInstanceState.getCharSequence(STATE_QUERY);
+        }
+    }*/
+
 
     @Override
     public void onAttach(Activity host) {
@@ -140,6 +167,7 @@ public class FrequencyFragment extends Fragment implements
          */
         Log.v(TAG, "onEventMainThread");
         f = event.getFrequency();
+        getActivity().invalidateOptionsMenu();
         actionDataExist();
     }
 
@@ -175,15 +203,26 @@ public class FrequencyFragment extends Fragment implements
                 startActivity(intent);
             }
         });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), MessageActivity.class);
+                intent.putExtra(MessageActivity.EXTRA_USER, keyUser);
+
+                FrequencyAdapter adapter = ((FrequencyAdapter) ((HeaderViewListAdapter) mListView.getAdapter()).getWrappedAdapter());
+                intent.putExtra(MessageActivity.EXTRA_WORD, adapter.getItem(position - 1)); //is it because of header? find out and do it properly
+                startActivity(intent);
+            }
+        });
     }
 
     private void actionDataExist() {
 
         fab.setVisibility(View.VISIBLE);
-       // mSearchView.setVisibility(View.VISIBLE);
         mListView.setAdapter(new FrequencyAdapter(getActivity(), f));
         mProgressBar.setVisibility(View.GONE);
-        Frequency f = FrequencyHolder.getInstance().get(keyUser);
+        //Frequency f = FrequencyHolder.getInstance().get(keyUser);
         mSnackbar = Snackbar.make(fab,
                 String.format(
                         getActivity().getResources().getString(R.string.size_template),
@@ -202,6 +241,7 @@ public class FrequencyFragment extends Fragment implements
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        Log.v(TAG, "onCreateOptionsMenu");
         inflater.inflate(R.menu.menu_main, menu);
 
         configureSearchView(menu);
@@ -210,28 +250,29 @@ public class FrequencyFragment extends Fragment implements
     }
 
     private void configureSearchView(Menu menu) {
-        /**
-         * TODO make invisible or non clickable while there is no data
-         */
 
         MenuItem search = menu.findItem(R.id.search);
 
-        mSearchView = (SearchView) search.getActionView();
-       // mSearchView.setVisibility(View.INVISIBLE);
-        mSearchView.setOnQueryTextListener(this);
-        mSearchView.setOnCloseListener(this);
-        mSearchView.setSubmitButtonEnabled(false);
-        mSearchView.setIconifiedByDefault(true);
+        if (f == null) {
+            search.setVisible(false);
+            Log.v(TAG, "onCreateOptionsMenu set INVISIBLE");
 
-        /**
-         * TODO save initial query on configuration change (search)
-         */
+        } else {
+            search.setVisible(true);
+            Log.v(TAG, "onCreateOptionsMenu set VISIBLE");
+            mSearchView = (SearchView) search.getActionView();
+            mSearchView.setOnQueryTextListener(this);
+            mSearchView.setOnCloseListener(this);
+            mSearchView.setSubmitButtonEnabled(false);
+            mSearchView.setIconifiedByDefault(true);
 
-       /* if (initialQuery != null) {
-            sv.setIconified(false);
-            search.expandActionView();
-            sv.setQuery(initialQuery, true);
-        }*/
+            if (initialQuery != null) {
+                mSearchView.setIconified(false);
+                search.expandActionView();
+                mSearchView.setQuery(initialQuery, true);
+                initialQuery = null;
+            }
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.Users;
+package com.juliazozulia.wordusage.UI.Users;
 
 import android.support.annotation.NonNull;
 

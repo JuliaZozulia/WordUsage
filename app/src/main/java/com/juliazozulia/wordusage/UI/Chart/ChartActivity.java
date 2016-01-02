@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.Chart;
+package com.juliazozulia.wordusage.UI.Chart;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

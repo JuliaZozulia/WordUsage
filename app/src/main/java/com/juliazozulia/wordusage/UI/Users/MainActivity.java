@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.Users;
+package com.juliazozulia.wordusage.UI.Users;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,9 +16,9 @@ import android.widget.ListView;
 
 
 import com.github.fabtransitionactivity.SheetLayout;
-import com.juliazozulia.wordusage.Chart.ChartActivity;
+import com.juliazozulia.wordusage.UI.Chart.ChartActivity;
 import com.juliazozulia.wordusage.R;
-import com.juliazozulia.wordusage.BasicWordFrequency.FrequencyActivity;
+import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyActivity;
 import com.juliazozulia.wordusage.Threads.LoadUsersThread;
 import com.juliazozulia.wordusage.Utils.CacheUtils;
 
@@ -28,11 +28,12 @@ import de.greenrobot.event.EventBus;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
-    ListView userListView;
-    android.support.v7.widget.SearchView sv;
-    String initialQuery;
-    SheetLayout mSheetLayout;
-    FloatingActionButton fab;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private ListView mUserListView;
+    //private RecyclerView mRecyclerView;
+    private android.support.v7.widget.SearchView mSearchView;
+    private SheetLayout mSheetLayout;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @SuppressWarnings("unused")
     public void onEventMainThread(UsersLoadedEvent event) {
-        userListView.setAdapter(new UserAdapter(this, event.getUsers()));
+
+        //mRecyclerView.setAdapter(new UserAdapterRecycler(this, event.getUsers()));
+          mUserListView.setAdapter(new UserAdapter(this, event.getUsers()));
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -70,26 +74,31 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     private void bindViews() {
-        userListView = (ListView) findViewById(R.id.userListView);
+        mUserListView = (ListView) findViewById(R.id.userListView);
+
+       // mRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
         mSheetLayout = (SheetLayout) findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) findViewById(R.id.user_fab);
     }
 
     private void setupViews() {
         mSheetLayout.setFab(fab);
+       // mRecyclerView.setHasFixedSize(true);
+       // mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void bindListeners() {
-        userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mUserListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getBaseContext(), FrequencyActivity.class);
-                UserAdapter adapter = (UserAdapter) userListView.getAdapter();
+                UserAdapter adapter = (UserAdapter) mUserListView.getAdapter();
                 intent.putExtra(FrequencyActivity.EXTRA_USER, adapter.getItem(position).userSkypeName);
                 startActivity(intent);
             }
 
         });
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,17 +131,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private void configureSearchView(Menu menu) {
         MenuItem search = menu.findItem(R.id.search);
-        sv = (SearchView) search.getActionView();
-        sv.setOnQueryTextListener(this);
-        sv.setOnCloseListener(this);
-        sv.setSubmitButtonEnabled(false);
-        sv.setIconifiedByDefault(true);
 
-        if (initialQuery != null) {
-            sv.setIconified(false);
-            search.expandActionView();
-            sv.setQuery(initialQuery, true);
+          if (mUserListView.getAdapter() == null) {
+      //  if (mRecyclerView.getAdapter() == null) {
+            search.setVisible(false);
+        } else {
+            search.setVisible(true);
+            mSearchView = (SearchView) search.getActionView();
+            mSearchView.setOnQueryTextListener(this);
+            mSearchView.setOnCloseListener(this);
+            mSearchView.setSubmitButtonEnabled(false);
+            mSearchView.setIconifiedByDefault(true);
         }
+
     }
 
     @Override
@@ -150,7 +161,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onQueryTextChange(String newText) {
 
-        ArrayAdapter<UserItem> adapter = (ArrayAdapter) userListView.getAdapter();
+        ArrayAdapter<UserItem> adapter = (ArrayAdapter) mUserListView.getAdapter();
         if (TextUtils.isEmpty(newText)) {
             adapter.getFilter().filter("");
         } else {
@@ -162,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onClose() {
 
-        ArrayAdapter<UserItem> adapter = (ArrayAdapter) userListView.getAdapter();
+        ArrayAdapter<UserItem> adapter = (ArrayAdapter) mUserListView.getAdapter();
         adapter.getFilter().filter("");
         return true;
     }

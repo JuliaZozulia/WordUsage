@@ -1,15 +1,13 @@
 package com.juliazozulia.wordusage.Threads;
 
 import android.content.Context;
-import android.os.Environment;
 import android.os.Process;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.juliazozulia.wordusage.BasicWordFrequency.FrequencyLoadedEvent;
+import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyLoadedEvent;
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
-import com.juliazozulia.wordusage.Utils.CacheUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,9 +19,10 @@ import de.greenrobot.event.EventBus;
 /**
  * Created by Julia on 09.12.2015.
  */
-/*
-     *  Load Frequency from cache if possible,  or calculate it
-     */
+
+/**
+ * Load Frequency from cache if possible,  or calculate it
+ */
 public class LoadFrequencyThread extends Thread {
 
     private String TAG = getClass().getSimpleName();
@@ -69,7 +68,7 @@ public class LoadFrequencyThread extends Thread {
 
         }
 
-       // if ((f == null) || (f.getUniqueCount() == 0)) {
+        // if ((f == null) || (f.getUniqueCount() == 0)) {
         if (f == null) {
             Log.e(TAG, "No saved instance. Starting calculation");
             new FrequencyCalculationThread(context, keyUser).start();

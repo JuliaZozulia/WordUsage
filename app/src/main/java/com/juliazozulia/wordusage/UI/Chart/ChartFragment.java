@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.Chart;
+package com.juliazozulia.wordusage.UI.Chart;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -55,6 +55,7 @@ public class ChartFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         setHasOptionsMenu(true);
         setRetainInstance(true);
         View rootView = inflater.inflate(R.layout.fragment_chart, container, false);

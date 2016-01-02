@@ -1,9 +1,6 @@
-package com.juliazozulia.wordusage.Users;
-
-import android.database.Cursor;
+package com.juliazozulia.wordusage.UI.Users;
 
 import java.util.ArrayList;
-import java.util.Currency;
 
 /**
  * Created by Julia on 20.11.2015.
@@ -21,15 +18,4 @@ public class UsersLoadedEvent {
         return users;
     }
 }
-   /* final Cursor model;
 
-    public UsersLoadedEvent(Cursor cursor) {
-        model = cursor;
-    }
-
-    public Cursor getCursor() {
-        return model;
-
-
-}
-*/

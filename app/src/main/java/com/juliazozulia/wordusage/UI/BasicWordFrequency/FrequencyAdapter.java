@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.BasicWordFrequency;
+package com.juliazozulia.wordusage.UI.BasicWordFrequency;
 
 import android.app.Activity;
 import android.view.View;

@@ -13,14 +13,13 @@ import java.io.File;
 /**
  * Created by Julia on 25.11.2015.
  */
-public class Database {
+public class SkypeDatabase {
 
     private static final String NAME = "main.db";
-    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
-   // private static long lastModified;
+   // public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
+    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Download" + "/" + NAME;
 
-
-    private Database() {
+    private SkypeDatabase() {
 
     }
 
@@ -37,15 +36,13 @@ public class Database {
 
         // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
         try {
-           // String fileName = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
-           // lastModified = new File(fileName).lastModified();
             SQLiteDatabase db = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
-            Log.i("Database", "successfully opened database " + NAME);
+            Log.i("SkypeDatabase", "successfully opened database " + NAME);
             return db;
         } catch (SQLiteException e)
 
         {
-            Log.w("Database", "could not open database " + NAME + " - " + e.getMessage());
+            Log.w("SkypeDatabase", "could not open database " + NAME + " - " + e.getMessage());
             return null;
         }
     }

@@ -3,9 +3,9 @@ package com.juliazozulia.wordusage.Threads;
 import android.database.Cursor;
 import android.os.Process;
 
-import com.juliazozulia.wordusage.Utils.Database;
-import com.juliazozulia.wordusage.Users.UserItem;
-import com.juliazozulia.wordusage.Users.UsersLoadedEvent;
+import com.juliazozulia.wordusage.Utils.SkypeDatabase;
+import com.juliazozulia.wordusage.UI.Users.UserItem;
+import com.juliazozulia.wordusage.UI.Users.UsersLoadedEvent;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ public class LoadUsersThread extends Thread {
     public void run() {
         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         Cursor c =
-                Database.getDatabase().rawQuery("SELECT  fullname, skypename, avatar_url FROM Contacts", null);
+                SkypeDatabase.getDatabase().rawQuery("SELECT  fullname, skypename, avatar_url FROM Contacts", null);
         ArrayList<UserItem> users = new ArrayList<>();
         while (c.moveToNext()) {
             String avatar = (c.getString(2) == null) ? (makeAvatarUrl(c.getString(1))) : (c.getString(2));
@@ -32,10 +32,12 @@ public class LoadUsersThread extends Thread {
         }
         c.close();
         Cursor owner =
-                Database.getDatabase().rawQuery("SELECT  fullname, skypename FROM Accounts", null);
+                SkypeDatabase.getDatabase().rawQuery("SELECT  fullname, skypename FROM Accounts", null);
 
         owner.moveToFirst();
-        users.set(0, new UserItem(owner.getString(0), owner.getString(1), makeAvatarUrl(owner.getString(1)))); //I hope that first user is always echo/sound test service
+        //I hope that the first user is always echo/sound test service
+        //so replace it with owner
+        users.set(0, new UserItem(owner.getString(0), owner.getString(1), makeAvatarUrl(owner.getString(1))));
         EventBus.getDefault().post(new UsersLoadedEvent(users));
         owner.close();
 

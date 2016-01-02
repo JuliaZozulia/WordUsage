@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.PersonalChart;
+package com.juliazozulia.wordusage.UI.PersonalChart;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.widget.SeekBar;
-import android.widget.Toast;
 
-import com.juliazozulia.wordusage.Chart.ChartActivity;
+import com.juliazozulia.wordusage.UI.Chart.ChartActivity;
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 import com.juliazozulia.wordusage.R;
@@ -26,7 +25,7 @@ import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 
 public class PersonalChartActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
-    private static String TAG = PersonalChartActivity.class.getSimpleName();
+    private static final String TAG = PersonalChartActivity.class.getSimpleName();
     public static final String EXTRA_USER = "user";
     PieChartView mChart;
     PieChartData data;
@@ -52,9 +51,7 @@ public class PersonalChartActivity extends AppCompatActivity implements SeekBar.
         mSeekBar.setMax(Math.min(f.getUniqueCount(), seekBarMaxValue));
         users = f.getItems();
 
-
-        generateData(seekBarDefaultValue);
-        mSeekBar.setProgress(seekBarDefaultValue);
+        mSeekBar.setProgress(Math.min(f.getUniqueCount(), seekBarDefaultValue));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_personal);
         fab.setOnClickListener(new View.OnClickListener() {

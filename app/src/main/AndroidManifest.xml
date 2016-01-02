@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Users.MainActivity"
+            android:name=".UI.Users.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,16 +22,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BasicWordFrequency.FrequencyActivity"
-            android:parentActivityName=".Users.MainActivity" />
+            android:name=".UI.BasicWordFrequency.FrequencyActivity"
+            android:parentActivityName=".UI.Users.MainActivity" />
         <activity
-            android:name=".Chart.ChartActivity"
-            android:parentActivityName=".Users.MainActivity" />
+            android:name=".UI.Chart.ChartActivity"
+            android:parentActivityName=".UI.Users.MainActivity" />
         <activity
-            android:name=".PersonalChart.PersonalChartActivity"
-            android:label="@string/title_activity_personal_chart"/>
-           <!-- android:parentActivityName=".BasicWordFrequency.FrequencyActivity" -->
+            android:name=".UI.PersonalChart.PersonalChartActivity"
+            android:label="@string/title_activity_personal_chart" />
+        <!-- android:parentActivityName=".BasicWordFrequency.FrequencyActivity" -->
 
+        <activity android:name=".UI.Messages.MessageActivity"></activity>
     </application>
 
 </manifest>

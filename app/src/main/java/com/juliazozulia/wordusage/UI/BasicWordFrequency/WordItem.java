@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.BasicWordFrequency;
+package com.juliazozulia.wordusage.UI.BasicWordFrequency;
 
 /**
  * Created by Julia on 24.11.2015.

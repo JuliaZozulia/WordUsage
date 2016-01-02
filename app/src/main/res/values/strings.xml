@@ -13,4 +13,8 @@
     <string name="chart_switch_text">Абсолютные значения/проценты</string>
     <string name="title_activity_personal_chart">PersonalChartActivity</string>
     <string name="close">Закрыть</string>
+    <string name="lorem_1">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum suscipit dictum ipsum id cursus. In facilisis massa mauris. Phasellus pretium et tellus quis venenatis. Morbi in turpis a est sagittis sollicitudin sit amet quis urna. Nulla fringilla facilisis pulvinar.</string>
+    <string name="lorem_2">Donec velit dui, tincidunt id pulvinar eu, lacinia tristique tellus. Vestibulum vestibulum erat dolor.</string>
+    <string name="lorem_3">Phasellus nisl odio, suscipit ut luctus eget, mollis eu tellus. Sed faucibus nisl urna, quis lacinia sem ornare eu. Aliquam ut elementum justo.</string>
+
 </resources>
