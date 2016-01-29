@@ -1,23 +1,19 @@
 package com.juliazozulia.wordusage.Utils;
 
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.*;
 import android.util.Log;
-
-import com.juliazozulia.wordusage.Utils.SharedPreferencesUtils;
-
-import java.io.File;
 
 /**
  * Created by Julia on 25.11.2015.
  */
 public class SkypeDatabase {
 
+    private static final String TAG = SkypeDatabase.class.getSimpleName();
     private static final String NAME = "main.db";
-   // public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
-    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Download" + "/" + NAME;
+    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
+   // public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Download" + "/" + NAME;
 
     private SkypeDatabase() {
 
@@ -29,20 +25,33 @@ public class SkypeDatabase {
 
 
     private static class LazyDatabaseHolder {
-        private static final SQLiteDatabase INSTANCE = CreateDatabase();
+        private static final SQLiteDatabase INSTANCE = openSkypeOrDemoDatabase();
     }
 
-    private static SQLiteDatabase CreateDatabase() {
+    private static SQLiteDatabase openSkypeOrDemoDatabase() {
 
-        // Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        //try to open user db from Documents.
+        //if it doesn't exist, open db from assets (demo)
+
+        SQLiteDatabase db = createDatabase(DATABASE_NAME);
+        if (db == null) {
+            Log.v(TAG, "could not open user database, trying to open demo db");
+            db = DemoDatabaseHelper.getInstance(Contextor.getInstance().getContext()).getReadableDatabase();
+        }
+        return db;
+
+    }
+
+    private static SQLiteDatabase createDatabase(String name) {
+
         try {
-            SQLiteDatabase db = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
-            Log.i("SkypeDatabase", "successfully opened database " + NAME);
+            SQLiteDatabase db = SQLiteDatabase.openDatabase(name, null, SQLiteDatabase.OPEN_READONLY);
+            Log.i(TAG, "successfully opened database " + name);
             return db;
         } catch (SQLiteException e)
 
         {
-            Log.w("SkypeDatabase", "could not open database " + NAME + " - " + e.getMessage());
+            Log.w(TAG, "could not open database " + name + " - " + e.getMessage());
             return null;
         }
     }
