@@ -7,8 +7,8 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyLoadedEvent;
-import com.juliazozulia.wordusage.Utils.MessageDatabaseHelper;
-import com.juliazozulia.wordusage.Utils.SkypeDatabase;
+import com.juliazozulia.wordusage.Database.MessageDatabaseHelper;
+import com.juliazozulia.wordusage.Database.SkypeDatabase;
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 import com.juliazozulia.wordusage.Utils.LMorphology;
@@ -25,10 +25,10 @@ public class  FrequencyCalculationThread extends Thread {
 
     String TAG = this.getClass().getSimpleName();
     Context context;
-    String keyUser;
+    int keyUser;
 
     Frequency f = new Frequency();
-    public FrequencyCalculationThread(Context context, String keyUser) {
+    public FrequencyCalculationThread(Context context, int keyUser) {
         super();
         this.context = context;
         this.keyUser = keyUser;
@@ -44,7 +44,7 @@ public class  FrequencyCalculationThread extends Thread {
       //  WordAndIds wordAndIds = new WordAndIds();
         int limit = 1000;
         int offset = 0;
-        String[] args = {keyUser, Integer.toString(limit), Integer.toString(offset)};
+        String[] args = {Integer.toString(keyUser), Integer.toString(limit), Integer.toString(offset)};
         String[] items;
 
         while (true) {
@@ -53,7 +53,7 @@ public class  FrequencyCalculationThread extends Thread {
             Log.v(TAG, "in while, offset = " + args[2]);
             WordAndIds wordAndIds = new WordAndIds();
 
-            c = SkypeDatabase.getDatabase().rawQuery("SELECT body_xml, id FROM Messages WHERE author = ? LIMIT ? OFFSET ?", args);
+            c = SkypeDatabase.getDatabase().rawQuery("SELECT body_xml, id FROM Messages WHERE author IN (SELECT skypename FROM Contacts WHERE id  = ? ) LIMIT ? OFFSET ?", args);
             while (c.moveToNext()) {
 
                 if (isInterrupted()) {
@@ -66,7 +66,7 @@ public class  FrequencyCalculationThread extends Thread {
                             String str = getProperString(item);
                             f .addValue(str);
                             wordAndIds.addValue(str, c.getInt(1));
-                            String[] argsID = {keyUser, str,  Integer.toString(c.getInt(1))};
+                           // String[] argsID = {keyUser, str,  Integer.toString(c.getInt(1))};
                            // MessageDatabaseHelper.getInstance(context).getWritableDatabase().execSQL("INSERT OR REPLACE INTO messages (skypename, word, messages_id) VALUES( ?, ?, ?)",
                            //         argsID);
                         }

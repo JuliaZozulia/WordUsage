@@ -3,6 +3,8 @@ package com.juliazozulia.wordusage.Utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.juliazozulia.wordusage.Database.SkypeDatabase;
+
 import java.io.File;
 
 /**

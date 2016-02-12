@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.Utils;
+package com.juliazozulia.wordusage.Database;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,7 @@ import android.os.Process;
 
 import com.juliazozulia.wordusage.UI.Messages.MessageItem;
 import com.juliazozulia.wordusage.UI.Messages.MessagesLoadedEvent;
+import com.juliazozulia.wordusage.Utils.WordAndIds;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +42,7 @@ public class MessageDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         //  db.execSQL("CREATE TABLE messages (_id INTEGER PRIMARY KEY, skypename TEXT, word TEXT, messages_ids TEXT);");
-        db.execSQL("CREATE TABLE messages (_id INTEGER PRIMARY KEY, skypename TEXT, word TEXT, message_id INTEGER);");
+        db.execSQL("CREATE TABLE messages (_id INTEGER PRIMARY KEY, skypename INTEGER, word TEXT, message_id INTEGER);");
     }
 
     @Override
@@ -50,20 +51,20 @@ public class MessageDatabaseHelper extends SQLiteOpenHelper {
         throw new RuntimeException("This should not be called");
     }
 
-    public void loadMessages(String user, String word) {
+    public void loadMessages(int user, String word) {
         new LoadMessageThread(user, word).start();
     }
 
-    public void writeMessagesId(String user, WordAndIds wordAndIds) {
+    public void writeMessagesId(int user, WordAndIds wordAndIds) {
         new UpdateThread(user, wordAndIds).start();
     }
 
 
     public class LoadMessageThread extends Thread {
-        private String user;
+        private int user;
         private String word;
 
-        LoadMessageThread(String user, String word) {
+        LoadMessageThread(int user, String word) {
             super();
             this.user = user;
             this.word = word;
@@ -77,7 +78,7 @@ public class MessageDatabaseHelper extends SQLiteOpenHelper {
             int offset = 0;
             Cursor c, c1;
             //loading ids
-            String[] args = {user, word, Integer.toString(limit), Integer.toString(offset)};
+            String[] args = {Integer.toString(user), word, Integer.toString(limit), Integer.toString(offset)};
             // String[] ids;
             int id;
             ArrayList<MessageItem> messages = new ArrayList<>();
@@ -123,10 +124,10 @@ public class MessageDatabaseHelper extends SQLiteOpenHelper {
 
     private class UpdateThread extends Thread {
 
-        private String user;
+        private int user;
         WordAndIds wordAndIds;
 
-        UpdateThread(String user, WordAndIds wordAndIds) {
+        UpdateThread(int user, WordAndIds wordAndIds) {
             super();
             this.user = user;
             this.wordAndIds = wordAndIds;
@@ -137,7 +138,7 @@ public class MessageDatabaseHelper extends SQLiteOpenHelper {
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
 
-            String[] args = {user, null, null};
+            String[] args = {Integer.toString(user), null, null};
             Iterator<String> wordIterator = wordAndIds.getWordIterator();
             Iterator<Integer> idsIterator;
             while (wordIterator.hasNext()) {

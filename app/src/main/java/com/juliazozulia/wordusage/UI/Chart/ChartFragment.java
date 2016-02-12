@@ -129,7 +129,7 @@ public class ChartFragment extends Fragment {
         List<Line> lines = new ArrayList<Line>();
         List<Line> linesPrev = new ArrayList<Line>();
 
-        String[] names = FrequencyHolder.getNames();
+        Integer[] names = FrequencyHolder.getNames();
         for (int i = 0; i < FrequencyHolder.getCount(); i++) {
 
             f = FrequencyHolder.getInstance().get(names[i]);

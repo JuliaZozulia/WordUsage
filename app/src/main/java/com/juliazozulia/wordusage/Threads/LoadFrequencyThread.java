@@ -26,10 +26,10 @@ import de.greenrobot.event.EventBus;
 public class LoadFrequencyThread extends Thread {
 
     private String TAG = getClass().getSimpleName();
-    String keyUser;
+    int keyUser;
     Context context;
 
-    public LoadFrequencyThread(Context context, String keyUser) {
+    public LoadFrequencyThread(Context context, int keyUser) {
         this.context = context;
         this.keyUser = keyUser;
     }

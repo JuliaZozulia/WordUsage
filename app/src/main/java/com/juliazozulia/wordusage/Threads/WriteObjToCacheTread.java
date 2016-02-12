@@ -20,13 +20,13 @@ public abstract class WriteObjToCacheTread extends Thread {
 
     private String TAG = getClass().getSimpleName();
     Context context;
-    String keyUser;
+    int keyUser;
     String filename;
 
-    public WriteObjToCacheTread(Context context, String keyUser) {
+    public WriteObjToCacheTread(Context context, int keyUser) {
         this.context = context;
         this.keyUser = keyUser;
-        filename = keyUser;
+        filename = Integer.toString(keyUser);
 
     }
 

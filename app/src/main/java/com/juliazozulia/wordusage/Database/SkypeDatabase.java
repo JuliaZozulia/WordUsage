@@ -1,9 +1,11 @@
-package com.juliazozulia.wordusage.Utils;
+package com.juliazozulia.wordusage.Database;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.os.*;
 import android.util.Log;
+
+import com.juliazozulia.wordusage.Utils.Contextor;
 
 /**
  * Created by Julia on 25.11.2015.

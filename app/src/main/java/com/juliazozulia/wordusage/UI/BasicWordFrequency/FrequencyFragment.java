@@ -44,8 +44,10 @@ public class FrequencyFragment extends Fragment implements
 
     private static final String TAG = FrequencyFragment.class.getSimpleName();
     private static final String KEY_USER = "user";
+    public static final String KEY_USER_NAME = "name";
     private Frequency f = null;
-    private String keyUser;
+    private int keyUser;
+    private String keyUserName;
 
     ListView mListView;
     ProgressBar mProgressBar;
@@ -59,10 +61,11 @@ public class FrequencyFragment extends Fragment implements
     public FrequencyFragment() {
     }
 
-    public static FrequencyFragment newInstance(String user) {
+    public static FrequencyFragment newInstance(int user, String name) {
         FrequencyFragment fragment = new FrequencyFragment();
         Bundle args = new Bundle();
-        args.putString(KEY_USER, user);
+        args.putInt(KEY_USER, user);
+        args.putString(KEY_USER_NAME, name);
         fragment.setArguments(args);
         return fragment;
     }
@@ -101,7 +104,8 @@ public class FrequencyFragment extends Fragment implements
         setRetainInstance(true);
         setHasOptionsMenu(true);
         if (getArguments() != null) {
-            keyUser = getArguments().getString(KEY_USER);
+            keyUser = getArguments().getInt(KEY_USER);
+            keyUserName = getArguments().getString(KEY_USER_NAME);
             f = FrequencyHolder.getFrequencyForce(getActivity(), keyUser);
         }
     }
@@ -190,25 +194,27 @@ public class FrequencyFragment extends Fragment implements
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), PersonalChartActivity.class);
                 intent.putExtra(PersonalChartActivity.EXTRA_USER, keyUser);
+                intent.putExtra(PersonalChartActivity.EXTRA_USER_NAME, keyUserName);
                 startActivity(intent);
                 //mSheetLayout.expandFab();
             }
         });
 
-        mSheetLayout.setFabAnimationEndListener(new SheetLayout.OnFabAnimationEndListener() {
+       /* mSheetLayout.setFabAnimationEndListener(new SheetLayout.OnFabAnimationEndListener() {
             @Override
             public void onFabAnimationEnd() {
                 Intent intent = new Intent(getActivity(), PersonalChartActivity.class);
                 intent.putExtra(PersonalChartActivity.EXTRA_USER, keyUser);
                 startActivity(intent);
             }
-        });
+        });*/
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MessageActivity.class);
                 intent.putExtra(MessageActivity.EXTRA_USER, keyUser);
+                intent.putExtra(MessageActivity.EXTRA_USER_NAME, keyUserName);
 
                 FrequencyAdapter adapter = ((FrequencyAdapter) ((HeaderViewListAdapter) mListView.getAdapter()).getWrappedAdapter());
                 intent.putExtra(MessageActivity.EXTRA_WORD, adapter.getItem(position - 1)); //is it because of header? find out and do it properly

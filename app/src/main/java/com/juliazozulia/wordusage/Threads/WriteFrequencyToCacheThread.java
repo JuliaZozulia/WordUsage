@@ -12,7 +12,7 @@ public class WriteFrequencyToCacheThread extends WriteObjToCacheTread {
 
     Frequency frequency;
 
-    public WriteFrequencyToCacheThread(Context context, String keyUser, Frequency frequency) {
+    public WriteFrequencyToCacheThread(Context context, int keyUser, Frequency frequency) {
         super(context, keyUser);
         this.frequency = frequency;
     }

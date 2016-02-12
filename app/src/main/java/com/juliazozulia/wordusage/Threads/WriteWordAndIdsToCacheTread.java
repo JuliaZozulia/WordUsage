@@ -13,7 +13,7 @@ public class WriteWordAndIdsToCacheTread extends WriteObjToCacheTread {
 
     WordAndIds obj;
 
-    public WriteWordAndIdsToCacheTread(Context context, String keyUser, WordAndIds obj) {
+    public WriteWordAndIdsToCacheTread(Context context, int keyUser, WordAndIds obj) {
         super(context, keyUser);
         this.obj = obj;
         filename = filename + "_messages";

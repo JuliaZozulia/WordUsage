@@ -18,38 +18,38 @@ public class FrequencyHolder {
 
     }
 
-    public static HashMap<String, Frequency> getInstance() {
+    public static HashMap<Integer, Frequency> getInstance() {
         return LazyFHolderHolder.INSTANCE;
     }
 
     private static class LazyFHolderHolder {
-        private static final HashMap<String, Frequency> INSTANCE = CreateFHolder();
+        private static final HashMap<Integer, Frequency> INSTANCE = CreateFHolder();
     }
 
-    private static HashMap<String, Frequency> CreateFHolder() {
-        HashMap<String, Frequency> fholder = new HashMap<String, Frequency>();
+    private static HashMap<Integer, Frequency> CreateFHolder() {
+        HashMap<Integer, Frequency> fholder = new HashMap<Integer, Frequency>();
 
         return fholder;
     }
 
 
-    public static String[] getNames() {
-        return getInstance().keySet().toArray(new String[getCount()]);
+    public static Integer[] getNames() {
+        return getInstance().keySet().toArray(new Integer[getCount()]);
     }
 
-    public static Frequency getFrequencyIfExist(String name) {
-        if (FrequencyHolder.getInstance().containsKey(name)) {
-            return FrequencyHolder.getInstance().get(name);
+    public static Frequency getFrequencyIfExist(Integer id) {
+        if (FrequencyHolder.getInstance().containsKey(id)) {
+            return FrequencyHolder.getInstance().get(id);
         }
         return null;
 
     }
 
-    public static Frequency getFrequencyForce(Context context, String name) {
-        if (FrequencyHolder.getInstance().containsKey(name)) {
-            return FrequencyHolder.getInstance().get(name);
+    public static Frequency getFrequencyForce(Context context, int id) {
+        if (FrequencyHolder.getInstance().containsKey(id)) {
+            return FrequencyHolder.getInstance().get(id);
         }
-        new LoadFrequencyThread(context, name).start();
+        new LoadFrequencyThread(context, id).start();
         return null;
 
     }

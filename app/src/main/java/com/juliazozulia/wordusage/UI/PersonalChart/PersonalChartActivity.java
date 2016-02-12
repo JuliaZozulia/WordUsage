@@ -27,6 +27,7 @@ public class PersonalChartActivity extends AppCompatActivity implements SeekBar.
 
     private static final String TAG = PersonalChartActivity.class.getSimpleName();
     public static final String EXTRA_USER = "user";
+    public static final String EXTRA_USER_NAME = "name";
     PieChartView mChart;
     PieChartData data;
     AppCompatSeekBar mSeekBar;
@@ -39,7 +40,7 @@ public class PersonalChartActivity extends AppCompatActivity implements SeekBar.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_chart);
-        this.setTitle(getIntent().getStringExtra(EXTRA_USER));
+        this.setTitle(getIntent().getStringExtra(EXTRA_USER_NAME));
 
         mChart = (PieChartView) findViewById(R.id.pie_chart);
         mChart.setOnValueTouchListener(new ValueTouchListener());
@@ -47,7 +48,7 @@ public class PersonalChartActivity extends AppCompatActivity implements SeekBar.
         mSeekBar = (AppCompatSeekBar) findViewById(R.id.chart_seek_bar);
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        f = FrequencyHolder.getInstance().get(getIntent().getStringExtra(EXTRA_USER));
+        f = FrequencyHolder.getInstance().get(getIntent().getIntExtra(EXTRA_USER, 0));
         mSeekBar.setMax(Math.min(f.getUniqueCount(), seekBarMaxValue));
         users = f.getItems();
 

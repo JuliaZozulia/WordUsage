@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getBaseContext(), FrequencyActivity.class);
                 UserAdapter adapter = (UserAdapter) mUserListView.getAdapter();
-                intent.putExtra(FrequencyActivity.EXTRA_USER, adapter.getItem(position).userSkypeName);
+                intent.putExtra(FrequencyActivity.EXTRA_USER, adapter.getItem(position).userID);
+                intent.putExtra(FrequencyActivity.EXTRA_USER_NAME, adapter.getItem(position).userFullName);
                 startActivity(intent);
             }
 
