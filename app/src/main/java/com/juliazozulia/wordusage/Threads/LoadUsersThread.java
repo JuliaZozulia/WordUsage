@@ -5,8 +5,8 @@ import android.os.Process;
 
 
 import com.juliazozulia.wordusage.Database.SkypeDatabase;
-import com.juliazozulia.wordusage.UI.Users.UserItem;
-import com.juliazozulia.wordusage.UI.Users.UsersLoadedEvent;
+import com.juliazozulia.wordusage.Model.UserItem;
+import com.juliazozulia.wordusage.Events.UsersLoadedEvent;
 
 import java.util.ArrayList;
 
@@ -40,7 +40,7 @@ public class LoadUsersThread extends Thread {
         //so replace it with owner
         //also hope that there isn't any user with id = 0
         users.set(0, new UserItem(0, owner.getString(0), owner.getString(1), makeAvatarUrl(owner.getString(1))));
-        EventBus.getDefault().post(new UsersLoadedEvent(users));
+        EventBus.getDefault().post(new UsersLoadedEvent(users, SkypeDatabase.isModelDatabase()));
         owner.close();
 
     }

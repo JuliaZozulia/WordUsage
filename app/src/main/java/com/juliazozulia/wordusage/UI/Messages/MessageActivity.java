@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 
+import com.juliazozulia.wordusage.Events.MessagesLoadedEvent;
 import com.juliazozulia.wordusage.R;
 import com.juliazozulia.wordusage.Database.MessageDatabaseHelper;
 import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;

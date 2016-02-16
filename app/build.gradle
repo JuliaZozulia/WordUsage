@@ -37,7 +37,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'de.greenrobot:eventbus:2.4.0'
     compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
@@ -46,7 +46,10 @@ dependencies {
     compile 'com.bowyer.app:fabtransitionlayout:0.2.0'
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.pnikosis:materialish-progress:1.7'
-    compile 'com.github.rey5137:material:1.2.2'
+    compile('com.github.afollestad.material-dialogs:commons:0.8.5.4@aar') {
+        transitive = true
+    }
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 
 
 

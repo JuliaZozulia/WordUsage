@@ -3,7 +3,7 @@ package com.juliazozulia.wordusage.Utils;
 import android.content.Context;
 
 import com.juliazozulia.wordusage.Threads.LoadFrequencyThread;
-import com.juliazozulia.wordusage.UI.Users.UserItem;
+import com.juliazozulia.wordusage.Model.UserItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;

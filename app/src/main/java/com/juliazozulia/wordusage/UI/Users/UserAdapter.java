@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.juliazozulia.wordusage.Model.UserItem;
 import com.juliazozulia.wordusage.R;
 import com.squareup.picasso.Picasso;
 
@@ -39,9 +40,9 @@ class UserAdapter extends ArrayAdapter<UserItem> {
             row.setTag(mViewHolder);
         }
 
-        mViewHolder.title.setText(item.userFullName);
+        mViewHolder.title.setText(item.getUserFullName());
         Picasso.with(activity)
-                .load(item.profileImage)
+                .load(item.getProfileImage())
                 .fit().centerCrop()
                 .placeholder(R.drawable.ic_person_black_24dp)
                 .error(R.drawable.ic_person_black_24dp)

@@ -6,9 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Process;
 
-import com.juliazozulia.wordusage.UI.Messages.MessageItem;
-import com.juliazozulia.wordusage.UI.Messages.MessagesLoadedEvent;
-import com.juliazozulia.wordusage.Utils.WordAndIds;
+import com.juliazozulia.wordusage.Model.MessageItem;
+import com.juliazozulia.wordusage.Events.MessagesLoadedEvent;
+import com.juliazozulia.wordusage.Model.WordAndIds;
 
 import java.util.ArrayList;
 import java.util.Date;

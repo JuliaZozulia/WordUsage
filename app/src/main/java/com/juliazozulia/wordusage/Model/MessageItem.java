@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.UI.Messages;
+package com.juliazozulia.wordusage.Model;
 
 import android.support.annotation.NonNull;
 
@@ -29,5 +29,15 @@ public class MessageItem {
         this.date = date;
     }
 
+    public String getText() {
+        return text;
+    }
 
+    public String getRecipient() {
+        return recipient;
+    }
+
+    public Date getDate() {
+        return date;
+    }
 }

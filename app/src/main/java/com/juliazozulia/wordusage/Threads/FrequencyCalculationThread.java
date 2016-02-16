@@ -7,14 +7,14 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.juliazozulia.wordusage.Events.FrequencyLoadStatesChanged;
-import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyLoadedEvent;
+import com.juliazozulia.wordusage.Events.FrequencyLoadedEvent;
 import com.juliazozulia.wordusage.Database.MessageDatabaseHelper;
 import com.juliazozulia.wordusage.Database.SkypeDatabase;
-import com.juliazozulia.wordusage.UI.Users.UserItem;
+import com.juliazozulia.wordusage.Model.UserItem;
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 import com.juliazozulia.wordusage.Utils.LMorphology;
-import com.juliazozulia.wordusage.Utils.WordAndIds;
+import com.juliazozulia.wordusage.Model.WordAndIds;
 
 import java.util.List;
 

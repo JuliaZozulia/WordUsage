@@ -34,15 +34,6 @@
             wheel:matProg_barColor="@color/accent"
             wheel:matProg_progressIndeterminate="true" />
 
-     <!--   <com.rey.material.widget.ProgressView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            app:pv_autostart="true"
-            app:pv_circular="true"
-            app:pv_progressStyle="@style/Material.Drawable.CircularProgress"
-            app:pv_progressMode="indeterminate"
-            android:id="@+id/progressBar1" />-->
-
         <TextView
             android:id="@+id/progress_text"
             android:layout_width="wrap_content"

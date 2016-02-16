@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.UI.BasicWordFrequency;
+package com.juliazozulia.wordusage.Events;
 
 import com.juliazozulia.wordusage.Utils.Frequency;
 

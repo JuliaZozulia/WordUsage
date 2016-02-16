@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.Utils;
+package com.juliazozulia.wordusage.Model;
 
 
 import java.util.HashMap;

@@ -15,7 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.github.fabtransitionactivity.SheetLayout;
+import com.juliazozulia.wordusage.Events.UsersLoadedEvent;
+import com.juliazozulia.wordusage.Model.UserItem;
 import com.juliazozulia.wordusage.UI.Chart.ChartActivity;
 import com.juliazozulia.wordusage.R;
 import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyActivity;
@@ -23,7 +26,6 @@ import com.juliazozulia.wordusage.Threads.LoadUsersThread;
 import com.juliazozulia.wordusage.Utils.CacheUtils;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;
-import com.juliazozulia.wordusage.WordUsageApplication;
 
 
 import de.greenrobot.event.EventBus;
@@ -32,17 +34,22 @@ import de.greenrobot.event.EventBus;
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener, SearchView.OnCloseListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String HAS_SHOWN = "hasShown";
     private ListView mUserListView;
     //private RecyclerView mRecyclerView;
     private android.support.v7.widget.SearchView mSearchView;
     private SheetLayout mSheetLayout;
     private FloatingActionButton fab;
+    boolean hasShown = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        if (savedInstanceState != null) {
+            hasShown = savedInstanceState.getBoolean(HAS_SHOWN);
+        }
 
         bindViews();
         setupViews();
@@ -69,12 +76,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         mUserListView.setAdapter(new UserAdapter(this, event.getUsers()));
         invalidateOptionsMenu();
         FrequencyHolder.getFrequencyForce(this, event.getUsers().get(0));
+        if (event.isFromModelDatabase() && (!hasShown)) {
+            MaterialDialog dialog = new MaterialDialog.Builder(this)
+                    .title(getResources().getString(R.string.dialog_demo_db_title))
+                    .content(getResources().getString(R.string.dialog_demo_db_content))
+                    .positiveText(getResources().getString(R.string.OK))
+                    .show();
+            hasShown = true;
+        }
     }
 
     @Override
     public void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(HAS_SHOWN, hasShown);
     }
 
     private void bindViews() {

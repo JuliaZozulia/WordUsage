@@ -1,3 +1,4 @@
+/*
 package com.juliazozulia.wordusage.UI.Users;
 
 import android.app.Activity;
@@ -12,9 +13,17 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+*/
 /**
  * Created by Julia on 22.12.2015.
- */
+ *//*
+
+*/
+/**
+ * let it be here just in case
+ *//*
+
+let it be here just in case
 
 public class UserAdapterRecycler extends RecyclerView.Adapter<UserAdapterRecycler.ViewHolder> {
 
@@ -71,4 +80,4 @@ public class UserAdapterRecycler extends RecyclerView.Adapter<UserAdapterRecycle
     public int getItemCount() {
         return mDataset.size();
     }
-}
+}*/

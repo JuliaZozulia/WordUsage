@@ -1,6 +1,6 @@
 package com.juliazozulia.wordusage.Utils.PieChartRenderer;
 
-import com.juliazozulia.wordusage.UI.Users.UserItem;
+import com.juliazozulia.wordusage.Model.UserItem;
 
 /**
  * Created by Julia on 13.02.2016.

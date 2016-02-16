@@ -1,17 +1,15 @@
 package com.juliazozulia.wordusage.UI.Messages;
 
 import android.app.Activity;
-import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.juliazozulia.wordusage.Model.MessageItem;
 import com.juliazozulia.wordusage.R;
 
-import java.lang.reflect.Array;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +36,10 @@ public class MessageAdapter extends ArrayAdapter<MessageItem> {
             row.setTag(mViewHolder);
         }
 
-        mViewHolder.text.setText(item.text);
-        mViewHolder.title.setText(item.recipient);
+        mViewHolder.text.setText(item.getText());
+        mViewHolder.title.setText(item.getRecipient());
 
-        mViewHolder.date.setText(DateFormat.getDateTimeInstance().format(item.date));
+        mViewHolder.date.setText(DateFormat.getDateTimeInstance().format(item.getDate()));
 
 
         return (row);

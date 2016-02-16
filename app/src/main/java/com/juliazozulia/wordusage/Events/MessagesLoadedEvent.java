@@ -1,5 +1,7 @@
-package com.juliazozulia.wordusage.UI.Messages;
+package com.juliazozulia.wordusage.Events;
 
+
+import com.juliazozulia.wordusage.Model.MessageItem;
 
 import java.util.ArrayList;
 

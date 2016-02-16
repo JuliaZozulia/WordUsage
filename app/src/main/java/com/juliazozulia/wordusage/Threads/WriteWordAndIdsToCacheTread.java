@@ -3,7 +3,7 @@ package com.juliazozulia.wordusage.Threads;
 import android.content.Context;
 
 import com.juliazozulia.wordusage.Utils.GsonUtils;
-import com.juliazozulia.wordusage.Utils.WordAndIds;
+import com.juliazozulia.wordusage.Model.WordAndIds;
 
 /**
  * Created by Julia on 25.12.2015.

@@ -1,4 +1,4 @@
-package com.juliazozulia.wordusage.UI.Users;
+package com.juliazozulia.wordusage.Model;
 
 import android.support.annotation.NonNull;
 
@@ -48,6 +48,8 @@ public class UserItem {
         this.userSkypeName = userSkypeName;
         this.profileImage = profileImage;
     }
+
+
 
 
     @Override

@@ -4,10 +4,9 @@ import android.content.Context;
 import android.os.Process;
 import android.util.Log;
 
-import com.google.gson.Gson;
 import com.juliazozulia.wordusage.Events.FrequencyLoadStatesChanged;
-import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyLoadedEvent;
-import com.juliazozulia.wordusage.UI.Users.UserItem;
+import com.juliazozulia.wordusage.Events.FrequencyLoadedEvent;
+import com.juliazozulia.wordusage.Model.UserItem;
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 import com.juliazozulia.wordusage.Utils.GsonUtils;

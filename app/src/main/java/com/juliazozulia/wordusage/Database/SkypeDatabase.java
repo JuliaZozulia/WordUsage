@@ -14,8 +14,9 @@ public class SkypeDatabase {
 
     private static final String TAG = SkypeDatabase.class.getSimpleName();
     private static final String NAME = "main.db";
-    public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
-   // public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Download" + "/" + NAME;
+    private static boolean isModelDatabase = false;
+    private static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Documents" + "/" + NAME;
+   // public static final String DATABASE_NAME = Environment.getExternalStorageDirectory() + "/Download" + "/" + NAME; //for more convenient testing using emulator
 
     private SkypeDatabase() {
 
@@ -25,6 +26,13 @@ public class SkypeDatabase {
         return LazyDatabaseHolder.INSTANCE;
     }
 
+    public static String getDatabaseName() {
+        return DATABASE_NAME;
+    }
+
+    public static boolean isModelDatabase() {
+        return isModelDatabase;
+    }
 
     private static class LazyDatabaseHolder {
         private static final SQLiteDatabase INSTANCE = openSkypeOrDemoDatabase();
@@ -37,6 +45,7 @@ public class SkypeDatabase {
 
         SQLiteDatabase db = createDatabase(DATABASE_NAME);
         if (db == null) {
+            isModelDatabase = true;
             Log.v(TAG, "could not open user database, trying to open demo db");
             db = DemoDatabaseHelper.getInstance(Contextor.getInstance().getContext()).getReadableDatabase();
         }

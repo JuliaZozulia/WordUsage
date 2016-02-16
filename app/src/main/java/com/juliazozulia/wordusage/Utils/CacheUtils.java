@@ -16,7 +16,7 @@ public class CacheUtils {
 
 
     public static void ClearCacheIfNecessary(Context context) {
-        compareDate(context, new File(SkypeDatabase.DATABASE_NAME).lastModified());
+        compareDate(context, new File(SkypeDatabase.getDatabaseName()).lastModified());
 
     }
 
