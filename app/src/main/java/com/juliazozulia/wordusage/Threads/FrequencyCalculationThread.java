@@ -41,17 +41,16 @@ public class FrequencyCalculationThread extends Thread {
     public void run() {
         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         Log.v(TAG, "run");
-        EventBus.getDefault().post(new FrequencyLoadStatesChanged(keyUser.getUserID(),
-                FrequencyLoadStatesChanged.LoadState.START_CALCULATION, 0));
         String divider = "[^[a-zA-Zа-яА-ЯёЁіІЇї]]";
         String replace = "(<.+>)|&quot;";
         Cursor c;
         //  WordAndIds wordAndIds = new WordAndIds();
-        int limit = 1000;
+        int limit = 3000;
         int offset = 0;
         String[] args = {keyUser.getUserSkypeName(), Integer.toString(limit), Integer.toString(offset)};
         String[] items;
         int totalCount = getTotalCount();
+        int counter = 0;
 
         while (true) {
 
@@ -80,14 +79,21 @@ public class FrequencyCalculationThread extends Thread {
                     Log.v("TAG", e.getMessage() + " some exception");
                 }
 
+                counter++;
+                if (counter % 50 == 0) {
+                    EventBus.getDefault().post(new FrequencyLoadStatesChanged(keyUser.getUserID(),
+                            FrequencyLoadStatesChanged.LoadState.START_CALCULATION, (float) counter / totalCount));
+
+                }
+
             }
 
             MessageDatabaseHelper.getInstance(context).writeMessagesId(keyUser.getUserID(), wordAndIds);
 
-            Double p = 100.0 * ((double) (offset + limit) / totalCount);
-            int percent = p.intValue();
+            /*Float percent = ((float) (offset + limit) / totalCount);
+            //  int percent = p.intValue();
             EventBus.getDefault().post(new FrequencyLoadStatesChanged(keyUser.getUserID(),
-                    FrequencyLoadStatesChanged.LoadState.START_CALCULATION, percent));
+                    FrequencyLoadStatesChanged.LoadState.START_CALCULATION, percent));*/
 
             if (c.getCount() < limit) {
                 break;
@@ -104,7 +110,7 @@ public class FrequencyCalculationThread extends Thread {
         new WriteFrequencyToCacheThread(context, keyUser.getUserID(), f).start();
         //  MessageDatabaseHelper.getInstance(context).writeMessagesId(keyUser,wordAndIds);
 
-        EventBus.getDefault().post(new FrequencyLoadedEvent(f));
+        EventBus.getDefault().post(new FrequencyLoadedEvent(keyUser.getUserID(), f) );
     }
 
     private int getTotalCount() {

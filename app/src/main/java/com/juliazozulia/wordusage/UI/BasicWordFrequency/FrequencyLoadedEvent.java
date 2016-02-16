@@ -7,14 +7,20 @@ import com.juliazozulia.wordusage.Utils.Frequency;
  */
 public class FrequencyLoadedEvent {
 
+    int userId;
     final Frequency frequency;
 
-    public FrequencyLoadedEvent(Frequency f) {
+    public FrequencyLoadedEvent(int userID, Frequency f) {
+        this.userId = userID;
         frequency = f;
     }
 
     public Frequency getFrequency() {
         return frequency;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 }
 

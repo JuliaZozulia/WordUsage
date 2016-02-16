@@ -36,6 +36,7 @@ import com.juliazozulia.wordusage.R;
 
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;
+import com.pnikosis.materialishprogress.ProgressWheel;
 
 import de.greenrobot.event.EventBus;
 
@@ -51,7 +52,7 @@ public class FrequencyFragment extends Fragment implements
     private Frequency f = null;
 
     ListView mListView;
-    ProgressBar mProgressBar;
+    ProgressWheel mProgressBar;
     TextView mProgressTitle;
     SheetLayout mSheetLayout;
     FloatingActionButton fab;
@@ -167,9 +168,11 @@ public class FrequencyFragment extends Fragment implements
     public void onEventMainThread(FrequencyLoadedEvent event) {
 
         Log.v(TAG, "onEventMainThread");
-        f = event.getFrequency();
-        getActivity().invalidateOptionsMenu();
-        actionDataExist();
+        if (event.getUserId() == SelectedUser.getInstance().getUserID()) {
+            f = event.getFrequency();
+            getActivity().invalidateOptionsMenu();
+            actionDataExist();
+        }
     }
 
     @SuppressWarnings("unused")
@@ -177,22 +180,19 @@ public class FrequencyFragment extends Fragment implements
         switch (event.getState()) {
             case START_CALCULATION: {
                 if (event.getUserId() == SelectedUser.getInstance().getUserID()) {
+                    mProgressBar.setLinearProgress(true);
                     mProgressTitle.setText(getString(R.string.loading_calculation));
-                 //   mProgressBar.setIndeterminate(false);
-                    mProgressBar.setMax(100);
-
                     mProgressBar.setProgress(event.getPercent());
-                    Log.v(TAG,"Set progress to " + Integer.toString(event.getPercent()));
                 }
                 break;
             }
             case START_LUCENE: {
                 mProgressTitle.setText(getString(R.string.loading_lucene));
-            //    mProgressBar.setIndeterminate(true);
                 break;
             }
-            case FINISH_LUCENE: {
-                mProgressTitle.setText(getString(R.string.loading_calculation));
+
+            case START_LOADING: {
+                mProgressTitle.setText(getString(R.string.loading));
                 break;
             }
         }
@@ -203,7 +203,7 @@ public class FrequencyFragment extends Fragment implements
     private void bindViews(View result) {
         mListView = (ListView) result.findViewById(R.id.word_list);
         mSheetLayout = (SheetLayout) result.findViewById(R.id.frequency_bottom_sheet);
-        mProgressBar = (ProgressBar) result.findViewById(R.id.progressBar1);
+        mProgressBar = (ProgressWheel) result.findViewById(R.id.progressBar1);
         mProgressTitle = (TextView) result.findViewById(R.id.progress_text);
         fab = (FloatingActionButton) result.findViewById(R.id.frequency_fab);
     }

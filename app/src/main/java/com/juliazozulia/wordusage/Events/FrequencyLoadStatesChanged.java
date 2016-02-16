@@ -7,7 +7,7 @@ public class FrequencyLoadStatesChanged {
 
     int userId;
     final LoadState state;
-    int percent;
+    float percent;
 
     public FrequencyLoadStatesChanged(LoadState s) {
         state = s;
@@ -17,13 +17,13 @@ public class FrequencyLoadStatesChanged {
         state = s;
     }
 
-    public FrequencyLoadStatesChanged(int userId, LoadState s, int percent) {
+    public FrequencyLoadStatesChanged(int userId, LoadState s, float percent) {
         this.userId = userId;
         state = s;
         this.percent = percent;
     }
 
-    public int getPercent() {
+    public float getPercent() {
         return percent;
     }
 
@@ -35,5 +35,5 @@ public class FrequencyLoadStatesChanged {
         return userId;
     }
 
-    public enum LoadState {START_CALCULATION, START_LUCENE, FINISH_LUCENE}
+    public enum LoadState {START_CALCULATION, START_LUCENE, FINISH_LUCENE, START_LOADING}
 }

@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //mRecyclerView.setAdapter(new UserAdapterRecycler(this, event.getUsers()));
         mUserListView.setAdapter(new UserAdapter(this, event.getUsers()));
         invalidateOptionsMenu();
-       // FrequencyHolder.getFrequencyForce(this, event.getUsers().get(0));
+        FrequencyHolder.getFrequencyForce(this, event.getUsers().get(0));
     }
 
     @Override
