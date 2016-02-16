@@ -14,6 +14,7 @@ import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 import com.juliazozulia.wordusage.R;
 import com.juliazozulia.wordusage.Utils.MyColorUtils;
+import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +27,6 @@ import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 public class PersonalChartActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = PersonalChartActivity.class.getSimpleName();
-    public static final String EXTRA_USER = "user";
-    public static final String EXTRA_USER_NAME = "name";
     PieChartView mChart;
     PieChartData data;
     AppCompatSeekBar mSeekBar;
@@ -40,7 +39,7 @@ public class PersonalChartActivity extends AppCompatActivity implements SeekBar.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_personal_chart);
-        this.setTitle(getIntent().getStringExtra(EXTRA_USER_NAME));
+        this.setTitle(SelectedUser.getInstance().getUserFullName());
 
         mChart = (PieChartView) findViewById(R.id.pie_chart);
         mChart.setOnValueTouchListener(new ValueTouchListener());
@@ -48,7 +47,7 @@ public class PersonalChartActivity extends AppCompatActivity implements SeekBar.
         mSeekBar = (AppCompatSeekBar) findViewById(R.id.chart_seek_bar);
         mSeekBar.setOnSeekBarChangeListener(this);
 
-        f = FrequencyHolder.getInstance().get(getIntent().getIntExtra(EXTRA_USER, 0));
+        f = FrequencyHolder.getInstance().get(SelectedUser.getInstance().getUserID());
         mSeekBar.setMax(Math.min(f.getUniqueCount(), seekBarMaxValue));
         users = f.getItems();
 

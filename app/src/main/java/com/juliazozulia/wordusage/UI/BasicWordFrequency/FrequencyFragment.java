@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.SearchView;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,8 +24,10 @@ import android.widget.ArrayAdapter;
 import android.widget.HeaderViewListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.github.fabtransitionactivity.SheetLayout;
+import com.juliazozulia.wordusage.Events.FrequencyLoadStatesChanged;
 import com.juliazozulia.wordusage.UI.Messages.MessageActivity;
 import com.juliazozulia.wordusage.UI.Messages.MessageAdapter;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
@@ -32,6 +35,7 @@ import com.juliazozulia.wordusage.UI.PersonalChart.PersonalChartActivity;
 import com.juliazozulia.wordusage.R;
 
 import com.juliazozulia.wordusage.Utils.Frequency;
+import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;
 
 import de.greenrobot.event.EventBus;
 
@@ -43,14 +47,12 @@ public class FrequencyFragment extends Fragment implements
         SearchView.OnCloseListener {
 
     private static final String TAG = FrequencyFragment.class.getSimpleName();
-    private static final String KEY_USER = "user";
-    public static final String KEY_USER_NAME = "name";
+
     private Frequency f = null;
-    private int keyUser;
-    private String keyUserName;
 
     ListView mListView;
     ProgressBar mProgressBar;
+    TextView mProgressTitle;
     SheetLayout mSheetLayout;
     FloatingActionButton fab;
     Snackbar mSnackbar;
@@ -61,11 +63,9 @@ public class FrequencyFragment extends Fragment implements
     public FrequencyFragment() {
     }
 
-    public static FrequencyFragment newInstance(int user, String name) {
+    public static FrequencyFragment newInstance() {
         FrequencyFragment fragment = new FrequencyFragment();
         Bundle args = new Bundle();
-        args.putInt(KEY_USER, user);
-        args.putString(KEY_USER_NAME, name);
         fragment.setArguments(args);
         return fragment;
     }
@@ -87,8 +87,10 @@ public class FrequencyFragment extends Fragment implements
 
         if (f == null) {
             mProgressBar.setVisibility(View.VISIBLE);
+            mProgressTitle.setVisibility(View.VISIBLE);
         } else {
             mProgressBar.setVisibility(View.GONE);
+            mProgressTitle.setVisibility(View.GONE);
             actionDataExist();
         }
 
@@ -103,10 +105,8 @@ public class FrequencyFragment extends Fragment implements
         Log.v(TAG, "onCreate");
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        if (getArguments() != null) {
-            keyUser = getArguments().getInt(KEY_USER);
-            keyUserName = getArguments().getString(KEY_USER_NAME);
-            f = FrequencyHolder.getFrequencyForce(getActivity(), keyUser);
+        if (f == null) {
+            f = FrequencyHolder.getFrequencyForce(getActivity(), SelectedUser.getInstance());
         }
     }
 
@@ -166,19 +166,45 @@ public class FrequencyFragment extends Fragment implements
     @SuppressWarnings("unused")
     public void onEventMainThread(FrequencyLoadedEvent event) {
 
-        /**
-         * TODO maybe remove FrequencyLoadedEvent event, switch to keyUser
-         */
         Log.v(TAG, "onEventMainThread");
         f = event.getFrequency();
         getActivity().invalidateOptionsMenu();
         actionDataExist();
     }
 
+    @SuppressWarnings("unused")
+    public void onEventMainThread(FrequencyLoadStatesChanged event) {
+        switch (event.getState()) {
+            case START_CALCULATION: {
+                if (event.getUserId() == SelectedUser.getInstance().getUserID()) {
+                    mProgressTitle.setText(getString(R.string.loading_calculation));
+                 //   mProgressBar.setIndeterminate(false);
+                    mProgressBar.setMax(100);
+
+                    mProgressBar.setProgress(event.getPercent());
+                    Log.v(TAG,"Set progress to " + Integer.toString(event.getPercent()));
+                }
+                break;
+            }
+            case START_LUCENE: {
+                mProgressTitle.setText(getString(R.string.loading_lucene));
+            //    mProgressBar.setIndeterminate(true);
+                break;
+            }
+            case FINISH_LUCENE: {
+                mProgressTitle.setText(getString(R.string.loading_calculation));
+                break;
+            }
+        }
+
+
+    }
+
     private void bindViews(View result) {
         mListView = (ListView) result.findViewById(R.id.word_list);
         mSheetLayout = (SheetLayout) result.findViewById(R.id.frequency_bottom_sheet);
         mProgressBar = (ProgressBar) result.findViewById(R.id.progressBar1);
+        mProgressTitle = (TextView) result.findViewById(R.id.progress_text);
         fab = (FloatingActionButton) result.findViewById(R.id.frequency_fab);
     }
 
@@ -193,8 +219,6 @@ public class FrequencyFragment extends Fragment implements
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), PersonalChartActivity.class);
-                intent.putExtra(PersonalChartActivity.EXTRA_USER, keyUser);
-                intent.putExtra(PersonalChartActivity.EXTRA_USER_NAME, keyUserName);
                 startActivity(intent);
                 //mSheetLayout.expandFab();
             }
@@ -213,8 +237,6 @@ public class FrequencyFragment extends Fragment implements
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), MessageActivity.class);
-                intent.putExtra(MessageActivity.EXTRA_USER, keyUser);
-                intent.putExtra(MessageActivity.EXTRA_USER_NAME, keyUserName);
 
                 FrequencyAdapter adapter = ((FrequencyAdapter) ((HeaderViewListAdapter) mListView.getAdapter()).getWrappedAdapter());
                 intent.putExtra(MessageActivity.EXTRA_WORD, adapter.getItem(position - 1)); //is it because of header? find out and do it properly
@@ -228,6 +250,7 @@ public class FrequencyFragment extends Fragment implements
         fab.setVisibility(View.VISIBLE);
         mListView.setAdapter(new FrequencyAdapter(getActivity(), f));
         mProgressBar.setVisibility(View.GONE);
+        mProgressTitle.setVisibility(View.GONE);
         //Frequency f = FrequencyHolder.getInstance().get(keyUser);
         mSnackbar = Snackbar.make(fab,
                 String.format(

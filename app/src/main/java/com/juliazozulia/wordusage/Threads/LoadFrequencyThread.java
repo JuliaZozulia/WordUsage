@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyLoadedEvent;
+import com.juliazozulia.wordusage.UI.Users.UserItem;
 import com.juliazozulia.wordusage.Utils.Frequency;
 import com.juliazozulia.wordusage.Utils.FrequencyHolder;
 
@@ -26,10 +27,10 @@ import de.greenrobot.event.EventBus;
 public class LoadFrequencyThread extends Thread {
 
     private String TAG = getClass().getSimpleName();
-    int keyUser;
+    UserItem keyUser;
     Context context;
 
-    public LoadFrequencyThread(Context context, int keyUser) {
+    public LoadFrequencyThread(Context context, UserItem keyUser) {
         this.context = context;
         this.keyUser = keyUser;
     }
@@ -41,7 +42,7 @@ public class LoadFrequencyThread extends Thread {
         Gson gson = new Gson();
         Frequency f = null;
 
-        String FILENAME = keyUser + ".txt";
+        String FILENAME = keyUser.getUserID() + ".txt";
 
         File fileToRead = new File(context.getExternalCacheDir().getPath() + "/" + FILENAME);
 
@@ -74,8 +75,8 @@ public class LoadFrequencyThread extends Thread {
             new FrequencyCalculationThread(context, keyUser).start();
         } else {
             // new FrequencyCalculationThread(keyUser).start();
-            FrequencyHolder.getInstance().remove(keyUser);
-            FrequencyHolder.getInstance().put(keyUser, f);
+            FrequencyHolder.getInstance().remove(keyUser.getUserID());
+            FrequencyHolder.getInstance().put(keyUser.getUserID(), f);
             Log.v(TAG, "added new f for " + keyUser);
 
             EventBus.getDefault().post(new FrequencyLoadedEvent(f));

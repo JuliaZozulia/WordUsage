@@ -3,7 +3,9 @@ package com.juliazozulia.wordusage.Utils;
 import android.content.Context;
 
 import com.juliazozulia.wordusage.Threads.LoadFrequencyThread;
+import com.juliazozulia.wordusage.UI.Users.UserItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -12,7 +14,9 @@ import java.util.HashMap;
 public class FrequencyHolder {
 
 
-    String TAG = getClass().getSimpleName();
+    private static final String TAG = FrequencyHolder.class.getSimpleName();
+    ArrayList hasStarted = new ArrayList();
+
 
     private FrequencyHolder() {
 
@@ -45,12 +49,17 @@ public class FrequencyHolder {
 
     }
 
-    public static Frequency getFrequencyForce(Context context, int id) {
-        if (FrequencyHolder.getInstance().containsKey(id)) {
-            return FrequencyHolder.getInstance().get(id);
+    public static Frequency getFrequencyForce(Context context, UserItem userItem) {
+        if ((FrequencyHolder.getInstance().containsKey(userItem.getUserID())) && (FrequencyHolder.getInstance().get(userItem.getUserID()) != null)) {
+            return FrequencyHolder.getInstance().get(userItem.getUserID());
+        } else {
+            if (!FrequencyHolder.getInstance().containsKey(userItem.getUserID())) {
+                new LoadFrequencyThread(context, userItem).start();
+
+                FrequencyHolder.getInstance().put(userItem.getUserID(), null);
+            }
+            return null;
         }
-        new LoadFrequencyThread(context, id).start();
-        return null;
 
     }
 

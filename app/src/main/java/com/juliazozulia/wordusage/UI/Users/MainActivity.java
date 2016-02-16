@@ -21,6 +21,9 @@ import com.juliazozulia.wordusage.R;
 import com.juliazozulia.wordusage.UI.BasicWordFrequency.FrequencyActivity;
 import com.juliazozulia.wordusage.Threads.LoadUsersThread;
 import com.juliazozulia.wordusage.Utils.CacheUtils;
+import com.juliazozulia.wordusage.Utils.FrequencyHolder;
+import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;
+import com.juliazozulia.wordusage.WordUsageApplication;
 
 
 import de.greenrobot.event.EventBus;
@@ -63,8 +66,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onEventMainThread(UsersLoadedEvent event) {
 
         //mRecyclerView.setAdapter(new UserAdapterRecycler(this, event.getUsers()));
-          mUserListView.setAdapter(new UserAdapter(this, event.getUsers()));
+        mUserListView.setAdapter(new UserAdapter(this, event.getUsers()));
         invalidateOptionsMenu();
+       // FrequencyHolder.getFrequencyForce(this, event.getUsers().get(0));
     }
 
     @Override
@@ -76,15 +80,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void bindViews() {
         mUserListView = (ListView) findViewById(R.id.userListView);
 
-       // mRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
+        // mRecyclerView = (RecyclerView) findViewById(R.id.user_recycler_view);
         mSheetLayout = (SheetLayout) findViewById(R.id.bottom_sheet);
         fab = (FloatingActionButton) findViewById(R.id.user_fab);
     }
 
     private void setupViews() {
         mSheetLayout.setFab(fab);
-       // mRecyclerView.setHasFixedSize(true);
-       // mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        // mRecyclerView.setHasFixedSize(true);
+        // mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void bindListeners() {
@@ -93,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getBaseContext(), FrequencyActivity.class);
                 UserAdapter adapter = (UserAdapter) mUserListView.getAdapter();
-                intent.putExtra(FrequencyActivity.EXTRA_USER, adapter.getItem(position).userID);
-                intent.putExtra(FrequencyActivity.EXTRA_USER_NAME, adapter.getItem(position).userFullName);
+                SelectedUser.getInstance().setUser(adapter.getItem(position));
+
                 startActivity(intent);
             }
 
@@ -133,8 +137,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void configureSearchView(Menu menu) {
         MenuItem search = menu.findItem(R.id.search);
 
-          if (mUserListView.getAdapter() == null) {
-      //  if (mRecyclerView.getAdapter() == null) {
+        if (mUserListView.getAdapter() == null) {
+            //  if (mRecyclerView.getAdapter() == null) {
             search.setVisible(false);
         } else {
             search.setVisible(true);
@@ -166,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (TextUtils.isEmpty(newText)) {
             adapter.getFilter().filter("");
         } else {
-            adapter.getFilter().filter(newText.toString());
+            adapter.getFilter().filter(newText);
         }
         return true;
     }

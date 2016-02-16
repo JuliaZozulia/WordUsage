@@ -12,8 +12,35 @@ public class UserItem {
     String userSkypeName;
     String profileImage;
 
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public int getUserID() {
+        return userID;
+    }
+
+    public String getUserFullName() {
+        return userFullName;
+    }
+
+    public String getUserSkypeName() {
+        return userSkypeName;
+    }
+
+    public UserItem() {
+    }
+
+    public void setUser(UserItem userItem) {
+        this.userID = userItem.userID;
+        this.userFullName = userItem.userFullName;
+        this.userSkypeName = userItem.userSkypeName;
+        this.profileImage = userItem.profileImage;
+
+    }
+
     public UserItem(int userID, String userFullName,
-                     @NonNull String userSkypeName,
+                    @NonNull String userSkypeName,
                     String profileImage) {
 
         this.userID = userID;

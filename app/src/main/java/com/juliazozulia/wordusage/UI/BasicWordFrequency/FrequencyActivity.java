@@ -3,18 +3,18 @@ package com.juliazozulia.wordusage.UI.BasicWordFrequency;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.juliazozulia.wordusage.Utils.PieChartRenderer.SelectedUser;
+
 public class FrequencyActivity extends AppCompatActivity {
 
     private static final String MODEL_TAG = "model";
     private FrequencyFragment mFrag = null;
 
-    public static final String EXTRA_USER = "user";
-    public static final String EXTRA_USER_NAME = "name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setTitle(getIntent().getStringExtra(EXTRA_USER_NAME));
+        this.setTitle(SelectedUser.getInstance().getUserFullName());
 
 
         /*mFrag = (FrequencyFragment) getFragmentManager().findFragmentByTag(MODEL_TAG);
@@ -25,7 +25,7 @@ public class FrequencyActivity extends AppCompatActivity {
         }*/
         FrequencyFragment demo = (FrequencyFragment) getFragmentManager().findFragmentById(android.R.id.content);
         if (demo == null) {
-            demo = FrequencyFragment.newInstance(getIntent().getIntExtra(EXTRA_USER, 0), getIntent().getStringExtra(EXTRA_USER_NAME));
+            demo = FrequencyFragment.newInstance();
             getFragmentManager().beginTransaction()
                     .add(android.R.id.content, demo).commit();
         }
