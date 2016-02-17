@@ -285,6 +285,45 @@ public class Frequency implements Serializable {
     //----------------------------------------------------------------------------------------------
 
     /**
+     * Returns the cumulative frequency of values less than or equal to v.
+     * <p>
+     * Returns 0 if v is not comparable to the values set.</p>
+     *
+     * @param v the value to lookup
+     * @return the proportion of values equal to v
+     */
+    public int getCumFreq(String v) {
+        if (getSumFreq() == 0) {
+            return 0;
+        }
+
+
+        int result = 0;
+
+
+   /*     if (v.compareTo(freqTable.firstKey()) < 0) {
+            return 0;  // v is comparable, but less than first value
+        }
+
+        if (v.compareTo(freqTable.lastKey()) >= 0) {
+            return getSumFreq();    // v is comparable, but greater than the last value
+        }*/
+
+        Iterator<String> values = valuesIterator();
+        while (values.hasNext()) {
+            String nextValue = values.next();
+            if (v.compareTo(nextValue) > 0) {
+                result += getCount(nextValue);
+            } else {
+                return result;
+            }
+        }
+        return result;
+    }
+
+//----------------------------------------------------------------------------------------------
+
+    /**
      * Merge another Frequency object's counts into this instance.
      * This Frequency's counts will be incremented (or set when not already set)
      * by the counts represented by other.
